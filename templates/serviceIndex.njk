@@ -1,0 +1,10 @@
+// @ts-ignore
+/* eslint-disable */
+{% for api in list -%}
+import * as {{ api.controllerName }} from './{{ api.fileName }}'
+{% endfor -%}
+export default {
+  {% for api in list -%}
+  ...{{ api.controllerName }},
+  {% endfor -%}
+}

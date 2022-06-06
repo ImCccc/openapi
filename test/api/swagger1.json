@@ -1,0 +1,358 @@
+{
+  "consumes": ["application/json"],
+  "definitions": {
+    "matrixAddMatrixRequest": {
+      "properties": {
+        "matrix": {
+          "$ref": "#/definitions/matrixMatrix"
+        }
+      },
+      "required": ["matrix"],
+      "type": "object"
+    },
+    "matrixAddMatrixResponse": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "matrix": {
+          "$ref": "#/definitions/matrixMatrix"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["msg", "matrix", "code"],
+      "type": "object"
+    },
+    "matrixDelMatrixRequest": {
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["id"],
+      "type": "object"
+    },
+    "matrixDelMatrixResponse": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg", "id"],
+      "type": "object"
+    },
+    "matrixGetMatrixRequest": {
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["id"],
+      "type": "object"
+    },
+    "matrixGetMatrixResponse": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "matrix": {
+          "$ref": "#/definitions/matrixMatrix"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["matrix", "code", "msg"],
+      "type": "object"
+    },
+    "matrixListMatrixRequest": {
+      "properties": {},
+      "required": true,
+      "type": "object"
+    },
+    "matrixListMatrixResponse": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "matrixs": {
+          "items": {
+            "$ref": "#/definitions/matrixMatrix"
+          },
+          "title": "矩阵列表",
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "format": "int32",
+          "title": "列表数量",
+          "type": "integer"
+        }
+      },
+      "required": ["code", "msg", "total", "matrixs"],
+      "type": "object"
+    },
+    "matrixMatrix": {
+      "properties": {
+        "id": {
+          "title": "矩阵id",
+          "type": "string"
+        },
+        "name": {
+          "title": "矩阵名称",
+          "type": "string"
+        },
+        "rows": {
+          "title": "矩阵分类",
+          "type": "string"
+        }
+      },
+      "required": ["id", "name", "rows"],
+      "type": "object"
+    },
+    "matrixPushMatrixItem": {
+      "properties": {
+        "device_sn": {
+          "type": "string"
+        },
+        "device_type_id": {
+          "type": "string"
+        }
+      },
+      "required": ["device_sn", "device_type_id"],
+      "type": "object"
+    },
+    "matrixPushMatrixRequest": {
+      "properties": {
+        "devices": {
+          "items": {
+            "$ref": "#/definitions/matrixPushMatrixItem"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "devices"],
+      "type": "object"
+    },
+    "matrixPushMatrixResponse": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "devices": {
+          "items": {
+            "$ref": "#/definitions/matrixPushMatrixItem"
+          },
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg", "devices"],
+      "type": "object"
+    },
+    "matrixUpdateMatrixRequest": {
+      "properties": {
+        "matrix": {
+          "$ref": "#/definitions/matrixMatrix"
+        }
+      },
+      "required": ["matrix"],
+      "type": "object"
+    },
+    "matrixUpdateMatrixResponse": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "matrix": {
+          "$ref": "#/definitions/matrixMatrix"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["msg", "matrix", "code"],
+      "type": "object"
+    }
+  },
+  "info": {
+    "title": "matrix/matrix.proto",
+    "version": "version not set"
+  },
+  "paths": {
+    "/rpc/tsm/MatrixService.AddMatrix": {
+      "post": {
+        "operationId": "MatrixService_AddMatrix",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/matrixAddMatrixRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/matrixAddMatrixResponse"
+            }
+          }
+        },
+        "summary": "添加矩阵",
+        "tags": ["MatrixService"]
+      }
+    },
+    "/rpc/tsm/MatrixService.DelMatrix": {
+      "post": {
+        "operationId": "MatrixService_DelMatrix",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/matrixDelMatrixRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/matrixDelMatrixResponse"
+            }
+          }
+        },
+        "summary": "删除矩阵",
+        "tags": ["MatrixService"]
+      }
+    },
+    "/rpc/tsm/MatrixService.GetMatrix": {
+      "post": {
+        "operationId": "MatrixService_GetMatrix",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/matrixGetMatrixRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/matrixGetMatrixResponse"
+            }
+          }
+        },
+        "summary": "获取矩阵",
+        "tags": ["MatrixService"]
+      }
+    },
+    "/rpc/tsm/MatrixService.ListMatrix": {
+      "post": {
+        "operationId": "MatrixService_ListMatrix",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/matrixListMatrixRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/matrixListMatrixResponse"
+            }
+          }
+        },
+        "summary": "矩阵列表",
+        "tags": ["MatrixService"]
+      }
+    },
+    "/rpc/tsm/MatrixService.PushMatrix": {
+      "post": {
+        "operationId": "MatrixService_PushMatrix",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/matrixPushMatrixRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/matrixPushMatrixResponse"
+            }
+          }
+        },
+        "summary": "矩阵推送",
+        "tags": ["MatrixService"]
+      }
+    },
+    "/rpc/tsm/MatrixService.UpdateMatrix": {
+      "post": {
+        "operationId": "MatrixService_UpdateMatrix",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/matrixUpdateMatrixRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/matrixUpdateMatrixResponse"
+            }
+          }
+        },
+        "summary": "更新矩阵",
+        "tags": ["MatrixService"]
+      }
+    }
+  },
+  "produces": ["application/json"],
+  "schemes": ["http", "https"],
+  "swagger": "2.0"
+}
