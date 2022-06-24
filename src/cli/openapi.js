@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { existsSync, mkdirSync } from 'fs';
-import joi from 'joi';
-import { join } from 'path';
-
-import { generateService } from '../index';
-
+const joi = require("joi");
+const join = require("path").join;
+const fs = require("fs");
+const { existsSync, mkdirSync } = fs;
 const cwd = process.cwd();
+const generateService = require("../index.js");
 
-export async function getSchema(openAPIConfig: any) {
+const getSchema = async function (openAPIConfig) {
   const itemSchema = joi.object({
     requestLibPath: joi.string(),
     schemaPath: joi.string(),
@@ -26,15 +24,18 @@ export async function getSchema(openAPIConfig: any) {
     }),
     axios: joi.boolean(),
   });
-  return await joi.alternatives(joi.array().items(itemSchema), itemSchema).validateAsync(openAPIConfig);
-}
+  return await joi
+    .alternatives(joi.array().items(itemSchema), itemSchema)
+    .validateAsync(openAPIConfig);
+};
 
-export const genAllFiles = async (openAPIConfig: any) => {
-  const pageConfig = require(join(cwd, 'package.json'));
+const genAllFiles = async (openAPIConfig) => {
+  const pageConfig = require(join(cwd, "package.json"));
 
-  const mockFolder = openAPIConfig.mock ? join(cwd, 'mock') : undefined;
+  const mockFolder = openAPIConfig.mock ? join(cwd, "mock") : undefined;
 
-  const serversFolder = openAPIConfig.serversPath || join(cwd, 'src', 'services');
+  const serversFolder =
+    openAPIConfig.serversPath || join(cwd, "src", "services");
 
   if (mockFolder && !existsSync(mockFolder)) {
     mkdirSync(mockFolder);
@@ -45,11 +46,16 @@ export const genAllFiles = async (openAPIConfig: any) => {
   }
 
   await generateService({
-    projectName: pageConfig.name.split('/').pop(),
+    projectName: pageConfig.name.split("/").pop(),
     serversPath: serversFolder,
     ...openAPIConfig,
     schemaPath: openAPIConfig.schemaPath,
     mockFolder,
   });
-  console.info('[openAPI]: execution complete');
+  console.info("[openAPI]: execution complete");
+};
+
+module.exports = {
+  getSchema,
+  genAllFiles,
 };

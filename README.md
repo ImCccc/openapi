@@ -1,7 +1,19 @@
-father-build:  将ts通过babel转化js的工具
-类型检查单独跑 tsc --noEmit 就行
+## 安装
 
-<!-- 
-  https://www.jianshu.com/p/768467368e17
-  https://www.cnblogs.com/zhangzl419/p/15210835.html
- -->
+```
+yarn add lcr-create-api -D
+```
+
+## 使用
+
+package.json:
+
+```javascript
+  "scripts": {
+    "create-api": "create-api"
+  },
+```
+
+```
+npm run create-api
+```

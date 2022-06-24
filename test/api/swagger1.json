@@ -1,32 +1,44 @@
 {
   "consumes": ["application/json"],
   "definitions": {
-    "matrixAddMatrixRequest": {
+    "smzxAgvDevice": {
       "properties": {
-        "matrix": {
-          "$ref": "#/definitions/matrixMatrix"
-        }
-      },
-      "required": ["matrix"],
-      "type": "object"
-    },
-    "matrixAddMatrixResponse": {
-      "properties": {
-        "code": {
-          "format": "int32",
-          "type": "integer"
+        "charge_point": {
+          "title": "充电点 x|y|angle",
+          "type": "string"
         },
-        "matrix": {
-          "$ref": "#/definitions/matrixMatrix"
+        "device_id": {
+          "type": "string"
         },
-        "msg": {
+        "device_name": {
+          "type": "string"
+        },
+        "is_online": {
+          "title": "在线状态 导入不要入参",
+          "type": "boolean"
+        },
+        "mac": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "product_name": {
           "type": "string"
         }
       },
-      "required": ["msg", "matrix", "code"],
+      "required": [
+        "product_id",
+        "product_name",
+        "mac",
+        "charge_point",
+        "is_online",
+        "device_id",
+        "device_name"
+      ],
       "type": "object"
     },
-    "matrixDelMatrixRequest": {
+    "smzxAgvDeviceGetReq": {
       "properties": {
         "id": {
           "type": "string"
@@ -35,63 +47,80 @@
       "required": ["id"],
       "type": "object"
     },
-    "matrixDelMatrixResponse": {
+    "smzxAgvDeviceGetResp": {
       "properties": {
+        "agv_device": {
+          "$ref": "#/definitions/smzxAgvDevice"
+        },
         "code": {
           "format": "int32",
           "type": "integer"
-        },
-        "id": {
-          "type": "string"
         },
         "msg": {
           "type": "string"
-        }
-      },
-      "required": ["code", "msg", "id"],
-      "type": "object"
-    },
-    "matrixGetMatrixRequest": {
-      "properties": {
-        "id": {
+        },
+        "propertys": {
           "type": "string"
         }
       },
-      "required": ["id"],
+      "required": ["code", "msg", "agv_device", "propertys"],
       "type": "object"
     },
-    "matrixGetMatrixResponse": {
+    "smzxAgvDeviceImportReq": {
       "properties": {
-        "code": {
-          "format": "int32",
-          "type": "integer"
-        },
-        "matrix": {
-          "$ref": "#/definitions/matrixMatrix"
-        },
-        "msg": {
-          "type": "string"
-        }
-      },
-      "required": ["matrix", "code", "msg"],
-      "type": "object"
-    },
-    "matrixListMatrixRequest": {
-      "properties": {},
-      "required": true,
-      "type": "object"
-    },
-    "matrixListMatrixResponse": {
-      "properties": {
-        "code": {
-          "format": "int32",
-          "type": "integer"
-        },
-        "matrixs": {
+        "list": {
           "items": {
-            "$ref": "#/definitions/matrixMatrix"
+            "$ref": "#/definitions/smzxAgvDevice"
           },
-          "title": "矩阵列表",
+          "type": "array"
+        }
+      },
+      "required": ["list"],
+      "type": "object"
+    },
+    "smzxAgvDeviceImportResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg"],
+      "type": "object"
+    },
+    "smzxAgvDevicePageReq": {
+      "properties": {
+        "device_name": {
+          "type": "string"
+        },
+        "page_index": {
+          "format": "int32",
+          "title": "第几页，从0开始",
+          "type": "integer"
+        },
+        "page_size": {
+          "format": "int32",
+          "title": "每页多少条",
+          "type": "integer"
+        }
+      },
+      "required": ["page_index", "page_size", "device_name"],
+      "type": "object"
+    },
+    "smzxAgvDevicePageResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxAgvDevice"
+          },
+          "title": "设备列表",
           "type": "array"
         },
         "msg": {
@@ -103,63 +132,980 @@
           "type": "integer"
         }
       },
-      "required": ["code", "msg", "total", "matrixs"],
+      "required": ["msg", "total", "list", "code"],
       "type": "object"
     },
-    "matrixMatrix": {
+    "smzxAgvDeviceUpdate": {
       "properties": {
+        "charge_point": {
+          "title": "充电点 x|y|angle",
+          "type": "string"
+        },
         "id": {
-          "title": "矩阵id",
+          "type": "string"
+        },
+        "mac": {
+          "type": "string"
+        }
+      },
+      "required": ["charge_point", "id", "mac"],
+      "type": "object"
+    },
+    "smzxAgvDeviceUpdateReq": {
+      "properties": {
+        "agv_device_update": {
+          "$ref": "#/definitions/smzxAgvDeviceUpdate"
+        }
+      },
+      "required": ["agv_device_update"],
+      "type": "object"
+    },
+    "smzxAgvDeviceUpdateResp": {
+      "properties": {
+        "agv_device": {
+          "$ref": "#/definitions/smzxAgvDevice"
+        },
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["msg", "agv_device", "code"],
+      "type": "object"
+    },
+    "smzxBroadcast": {
+      "properties": {
+        "code": {
+          "title": "播报代码",
+          "type": "string"
+        },
+        "content": {
+          "title": "播报内容",
+          "type": "string"
+        },
+        "id": {
+          "title": "播报id",
           "type": "string"
         },
         "name": {
-          "title": "矩阵名称",
-          "type": "string"
-        },
-        "rows": {
-          "title": "矩阵分类",
+          "title": "播报名称",
           "type": "string"
         }
       },
-      "required": ["id", "name", "rows"],
+      "required": ["id", "name", "code", "content"],
       "type": "object"
     },
-    "matrixPushMatrixItem": {
+    "smzxBroadcastAddReq": {
       "properties": {
-        "device_sn": {
-          "type": "string"
+        "broadcast": {
+          "$ref": "#/definitions/smzxBroadcast"
+        }
+      },
+      "required": ["broadcast"],
+      "type": "object"
+    },
+    "smzxBroadcastAddResp": {
+      "properties": {
+        "broadcast": {
+          "$ref": "#/definitions/smzxBroadcast"
         },
-        "device_type_id": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
           "type": "string"
         }
       },
-      "required": ["device_sn", "device_type_id"],
+      "required": ["code", "msg", "broadcast"],
       "type": "object"
     },
-    "matrixPushMatrixRequest": {
+    "smzxBroadcastDelReq": {
       "properties": {
-        "devices": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["id"],
+      "type": "object"
+    },
+    "smzxBroadcastDelResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "code", "msg"],
+      "type": "object"
+    },
+    "smzxBroadcastGetReq": {
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["id"],
+      "type": "object"
+    },
+    "smzxBroadcastGetResp": {
+      "properties": {
+        "broadcast": {
+          "$ref": "#/definitions/smzxBroadcast"
+        },
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["broadcast", "code", "msg"],
+      "type": "object"
+    },
+    "smzxBroadcastPageReq": {
+      "properties": {
+        "page_index": {
+          "format": "int32",
+          "title": "第几页，从0开始",
+          "type": "integer"
+        },
+        "page_size": {
+          "format": "int32",
+          "title": "每页多少条",
+          "type": "integer"
+        }
+      },
+      "required": ["page_index", "page_size"],
+      "type": "object"
+    },
+    "smzxBroadcastPageResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
           "items": {
-            "$ref": "#/definitions/matrixPushMatrixItem"
+            "$ref": "#/definitions/smzxBroadcast"
+          },
+          "title": "播报列表",
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "format": "int32",
+          "title": "列表数量",
+          "type": "integer"
+        }
+      },
+      "required": ["code", "msg", "total", "list"],
+      "type": "object"
+    },
+    "smzxBroadcastUpdateReq": {
+      "properties": {
+        "broadcast": {
+          "$ref": "#/definitions/smzxBroadcast"
+        }
+      },
+      "required": ["broadcast"],
+      "type": "object"
+    },
+    "smzxBroadcastUpdateResp": {
+      "properties": {
+        "broadcast": {
+          "$ref": "#/definitions/smzxBroadcast"
+        },
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg", "broadcast"],
+      "type": "object"
+    },
+    "smzxChargeConfigGetReq": {
+      "properties": {},
+      "required": true,
+      "type": "object"
+    },
+    "smzxChargeConfigGetResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "power": {
+          "format": "int32",
+          "title": "剩余电量百分比 0-100 去回充",
+          "type": "integer"
+        },
+        "status": {
+          "format": "int32",
+          "title": "0 关闭 1 开启",
+          "type": "integer"
+        }
+      },
+      "required": ["power", "status", "code", "msg"],
+      "type": "object"
+    },
+    "smzxChargeConfigUpdateReq": {
+      "properties": {
+        "power": {
+          "format": "int32",
+          "title": "剩余电量百分比 0-100 去回充",
+          "type": "integer"
+        },
+        "status": {
+          "format": "int32",
+          "title": "0 关闭 1 开启",
+          "type": "integer"
+        }
+      },
+      "required": ["power", "status"],
+      "type": "object"
+    },
+    "smzxChargeConfigUpdateResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "power": {
+          "format": "int32",
+          "title": "剩余电量百分比 0-100 去回充",
+          "type": "integer"
+        },
+        "status": {
+          "format": "int32",
+          "title": "0 关闭 1 开启",
+          "type": "integer"
+        }
+      },
+      "required": ["msg", "power", "status", "code"],
+      "type": "object"
+    },
+    "smzxChargeDevice": {
+      "properties": {
+        "device_id": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string"
+        },
+        "power": {
+          "format": "int32",
+          "title": "剩余电量百分比 0-100",
+          "type": "integer"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "product_name": {
+          "type": "string"
+        },
+        "status": {
+          "format": "int32",
+          "title": "1 充电 2 放电 3 正在去充电",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "power",
+        "status",
+        "device_id",
+        "device_name",
+        "product_id",
+        "product_name"
+      ],
+      "type": "object"
+    },
+    "smzxChargeDeviceListReq": {
+      "properties": {},
+      "required": true,
+      "type": "object"
+    },
+    "smzxChargeDeviceListResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxChargeDevice"
           },
           "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": ["code", "msg", "total", "list"],
+      "type": "object"
+    },
+    "smzxCommonReq": {
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "msg_id": {
+          "type": "string"
+        },
+        "raw_data": {
+          "format": "byte",
+          "type": "string"
+        },
+        "thing": {
+          "type": "string"
+        },
+        "time_stamp": {
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "required": ["thing", "time_stamp", "raw_data", "from", "msg_id"],
+      "type": "object"
+    },
+    "smzxCommonResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "time_stamp": {
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "required": ["msg", "time_stamp", "code"],
+      "type": "object"
+    },
+    "smzxDevicePropertyRefreshReq": {
+      "properties": {},
+      "required": true,
+      "type": "object"
+    },
+    "smzxDevicePropertyRefreshResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg"],
+      "type": "object"
+    },
+    "smzxMeeting": {
+      "properties": {
+        "area": {
+          "format": "int32",
+          "title": "区域 1 南门左侧平台 2 南门右侧平台 3 北门平台",
+          "type": "integer"
+        },
+        "code": {
+          "title": "会议室代码",
+          "type": "string"
+        },
+        "name": {
+          "title": "会议室名称",
+          "type": "string"
+        },
+        "taskRecord": {
+          "$ref": "#/definitions/smzxTaskRecord",
+          "title": "最后一次运行任务"
+        },
+        "url": {
+          "title": "图片地址",
+          "type": "string"
+        }
+      },
+      "required": ["name", "code", "area", "url", "taskRecord"],
+      "type": "object"
+    },
+    "smzxMeetingListReq": {
+      "properties": {},
+      "required": true,
+      "type": "object"
+    },
+    "smzxMeetingListResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxMeeting"
+          },
+          "title": "会议室列表",
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "format": "int32",
+          "title": "列表数量",
+          "type": "integer"
+        }
+      },
+      "required": ["list", "code", "msg", "total"],
+      "type": "object"
+    },
+    "smzxMeetingStartTaskReq": {
+      "properties": {
+        "code": {
+          "title": "会议室代码",
+          "type": "string"
+        },
+        "splice": {
+          "title": "是否拼接",
+          "type": "boolean"
+        }
+      },
+      "required": ["code", "splice"],
+      "type": "object"
+    },
+    "smzxMeetingStartTaskResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "lock_code_list": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "meeting": {
+          "$ref": "#/definitions/smzxMeeting"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg", "meeting", "lock_code_list"],
+      "type": "object"
+    },
+    "smzxSensorDevice": {
+      "properties": {
+        "area": {
+          "format": "int32",
+          "title": "区位类型 0无 1 外室 2 中式茶艺厅 3西式茶歇亭-1",
+          "type": "integer"
+        },
+        "device_id": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string"
+        },
+        "is_online": {
+          "title": "在线状态 导入不要入参",
+          "type": "boolean"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "product_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "device_id",
+        "device_name",
+        "product_id",
+        "product_name",
+        "area",
+        "is_online"
+      ],
+      "type": "object"
+    },
+    "smzxSensorDeviceAllPropertyReq": {
+      "properties": {},
+      "required": true,
+      "type": "object"
+    },
+    "smzxSensorDeviceAllPropertyResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxSensorDeviceProperty"
+          },
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg", "list"],
+      "type": "object"
+    },
+    "smzxSensorDeviceImportReq": {
+      "properties": {
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxSensorDevice"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["list"],
+      "type": "object"
+    },
+    "smzxSensorDeviceImportResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["msg", "code"],
+      "type": "object"
+    },
+    "smzxSensorDevicePageReq": {
+      "properties": {
+        "device_name": {
+          "type": "string"
+        },
+        "page_index": {
+          "format": "int32",
+          "title": "第几页，从0开始",
+          "type": "integer"
+        },
+        "page_size": {
+          "format": "int32",
+          "title": "每页多少条",
+          "type": "integer"
+        }
+      },
+      "required": ["device_name", "page_index", "page_size"],
+      "type": "object"
+    },
+    "smzxSensorDevicePageResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxSensorDevice"
+          },
+          "title": "设备列表",
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "format": "int32",
+          "title": "列表数量",
+          "type": "integer"
+        }
+      },
+      "required": ["msg", "total", "list", "code"],
+      "type": "object"
+    },
+    "smzxSensorDeviceProperty": {
+      "properties": {
+        "area": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "device_id": {
+          "type": "string"
+        },
+        "propertys": {
+          "type": "string"
+        }
+      },
+      "required": ["area", "device_id", "propertys"],
+      "type": "object"
+    },
+    "smzxSensorDeviceUpdate": {
+      "properties": {
+        "area": {
+          "format": "int32",
+          "title": "区位类型 0无 1 外室 2 中式茶艺厅 3西式茶歇亭-1",
+          "type": "integer"
         },
         "id": {
           "type": "string"
         }
       },
-      "required": ["id", "devices"],
+      "required": ["id", "area"],
       "type": "object"
     },
-    "matrixPushMatrixResponse": {
+    "smzxSensorDeviceUpdateReq": {
+      "properties": {
+        "sensor_device_update": {
+          "$ref": "#/definitions/smzxSensorDeviceUpdate"
+        }
+      },
+      "required": ["sensor_device_update"],
+      "type": "object"
+    },
+    "smzxSensorDeviceUpdateResp": {
       "properties": {
         "code": {
           "format": "int32",
           "type": "integer"
         },
-        "devices": {
+        "msg": {
+          "type": "string"
+        },
+        "sensor_device": {
+          "$ref": "#/definitions/smzxSensorDevice"
+        }
+      },
+      "required": ["code", "msg", "sensor_device"],
+      "type": "object"
+    },
+    "smzxStreamReq": {
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        },
+        "device_id": {
+          "type": "string"
+        },
+        "msg_id": {
+          "type": "string"
+        },
+        "time_stamp": {
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "msg_id",
+        "time_stamp",
+        "device_id",
+        "command",
+        "data",
+        "context"
+      ],
+      "type": "object"
+    },
+    "smzxStreamResp": {
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        },
+        "msg_id": {
+          "type": "string"
+        },
+        "time_stamp": {
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "required": ["msg_id", "time_stamp", "command", "data", "context"],
+      "type": "object"
+    },
+    "smzxTaskItem": {
+      "properties": {
+        "arg": {
           "items": {
-            "$ref": "#/definitions/matrixPushMatrixItem"
+            "type": "string"
+          },
+          "title": "参数",
+          "type": "array"
+        },
+        "command": {
+          "title": "指令",
+          "type": "string"
+        },
+        "device_id": {
+          "title": "设备id",
+          "type": "string"
+        },
+        "err": {
+          "title": "错误原因",
+          "type": "string"
+        },
+        "finish_time": {
+          "format": "int64",
+          "title": "结束时间",
+          "type": "string"
+        },
+        "group_id": {
+          "title": "任务组id",
+          "type": "string"
+        },
+        "id": {
+          "title": "任务项id",
+          "type": "string"
+        },
+        "start_time": {
+          "format": "int64",
+          "title": "开始时间",
+          "type": "string"
+        },
+        "status": {
+          "format": "int32",
+          "title": "状态 0 已发送 1 执行中 2 失败 3 成功",
+          "type": "integer"
+        },
+        "task_id": {
+          "title": "任务id",
+          "type": "string"
+        },
+        "wait_finish": {
+          "title": "是否需要等待结束",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "arg",
+        "err",
+        "start_time",
+        "wait_finish",
+        "id",
+        "group_id",
+        "device_id",
+        "command",
+        "status",
+        "finish_time",
+        "task_id"
+      ],
+      "type": "object"
+    },
+    "smzxTaskRecord": {
+      "properties": {
+        "code": {
+          "title": "任务代码",
+          "type": "string"
+        },
+        "current": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "err": {
+          "title": "失败原因",
+          "type": "string"
+        },
+        "finish_time": {
+          "format": "int64",
+          "title": "结束时间",
+          "type": "string"
+        },
+        "id": {
+          "title": "任务id",
+          "type": "string"
+        },
+        "name": {
+          "title": "任务名称",
+          "type": "string"
+        },
+        "splice": {
+          "type": "boolean"
+        },
+        "start_time": {
+          "format": "int64",
+          "title": "开始时间",
+          "type": "string"
+        },
+        "task_item_list": {
+          "items": {
+            "$ref": "#/definitions/smzxTaskItem"
+          },
+          "title": "任务项列表",
+          "type": "array"
+        },
+        "task_status": {
+          "format": "int32",
+          "title": "任务状态 0 待拼接 1 执行中 2 失败 3 成功",
+          "type": "integer"
+        },
+        "total": {
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total",
+        "current",
+        "task_status",
+        "start_time",
+        "task_item_list",
+        "id",
+        "name",
+        "splice",
+        "code",
+        "err",
+        "finish_time"
+      ],
+      "type": "object"
+    },
+    "smzxTaskRecordPageReq": {
+      "properties": {
+        "end_time": {
+          "format": "int64",
+          "title": "结束时间",
+          "type": "string"
+        },
+        "page_index": {
+          "format": "int32",
+          "title": "第几页，从0开始",
+          "type": "integer"
+        },
+        "page_size": {
+          "format": "int32",
+          "title": "每页多少条",
+          "type": "integer"
+        },
+        "start_time": {
+          "format": "int64",
+          "title": "开始时间",
+          "type": "string"
+        }
+      },
+      "required": ["page_index", "page_size", "start_time", "end_time"],
+      "type": "object"
+    },
+    "smzxTaskRecordPageResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxTaskRecord"
+          },
+          "title": "任务记录列表",
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "format": "int32",
+          "title": "列表数量",
+          "type": "integer"
+        }
+      },
+      "required": ["code", "msg", "total", "list"],
+      "type": "object"
+    },
+    "smzxVideo": {
+      "properties": {
+        "id": {
+          "title": "视频id",
+          "type": "string"
+        },
+        "name": {
+          "title": "视频名称",
+          "type": "string"
+        },
+        "video_url": {
+          "title": "视频url",
+          "type": "string"
+        }
+      },
+      "required": ["id", "name", "video_url"],
+      "type": "object"
+    },
+    "smzxVideoAddReq": {
+      "properties": {
+        "video": {
+          "$ref": "#/definitions/smzxVideo"
+        }
+      },
+      "required": ["video"],
+      "type": "object"
+    },
+    "smzxVideoAddResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "video": {
+          "$ref": "#/definitions/smzxVideo"
+        }
+      },
+      "required": ["code", "msg", "video"],
+      "type": "object"
+    },
+    "smzxVideoDelListReq": {
+      "properties": {
+        "ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["ids"],
+      "type": "object"
+    },
+    "smzxVideoDelListResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "ids": {
+          "items": {
+            "type": "string"
           },
           "type": "array"
         },
@@ -167,50 +1113,187 @@
           "type": "string"
         }
       },
-      "required": ["code", "msg", "devices"],
+      "required": ["code", "msg", "ids"],
       "type": "object"
     },
-    "matrixUpdateMatrixRequest": {
+    "smzxVideoDevice": {
       "properties": {
-        "matrix": {
-          "$ref": "#/definitions/matrixMatrix"
+        "device_id": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "string"
+        },
+        "product_name": {
+          "type": "string"
         }
       },
-      "required": ["matrix"],
+      "required": ["device_id", "device_name", "product_id", "product_name"],
       "type": "object"
     },
-    "matrixUpdateMatrixResponse": {
+    "smzxVideoDeviceListReq": {
+      "properties": {},
+      "required": true,
+      "type": "object"
+    },
+    "smzxVideoDeviceListResp": {
       "properties": {
         "code": {
           "format": "int32",
           "type": "integer"
         },
-        "matrix": {
-          "$ref": "#/definitions/matrixMatrix"
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxVideoDevice"
+          },
+          "title": "设备列表",
+          "type": "array"
         },
         "msg": {
           "type": "string"
         }
       },
-      "required": ["msg", "matrix", "code"],
+      "required": ["code", "msg", "list"],
+      "type": "object"
+    },
+    "smzxVideoGetReq": {
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": ["id"],
+      "type": "object"
+    },
+    "smzxVideoGetResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "video": {
+          "$ref": "#/definitions/smzxVideo"
+        }
+      },
+      "required": ["code", "msg", "video"],
+      "type": "object"
+    },
+    "smzxVideoPageReq": {
+      "properties": {
+        "page_index": {
+          "format": "int32",
+          "title": "第几页，从0开始",
+          "type": "integer"
+        },
+        "page_size": {
+          "format": "int32",
+          "title": "每页多少条",
+          "type": "integer"
+        }
+      },
+      "required": ["page_index", "page_size"],
+      "type": "object"
+    },
+    "smzxVideoPageResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/definitions/smzxVideo"
+          },
+          "title": "视频列表",
+          "type": "array"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "total": {
+          "format": "int32",
+          "title": "列表数量",
+          "type": "integer"
+        }
+      },
+      "required": ["code", "msg", "total", "list"],
+      "type": "object"
+    },
+    "smzxVideoPushReq": {
+      "properties": {
+        "device_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "video_id": {
+          "type": "string"
+        }
+      },
+      "required": ["device_ids", "video_id"],
+      "type": "object"
+    },
+    "smzxVideoPushResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": ["code", "msg"],
+      "type": "object"
+    },
+    "smzxVideoUpdateReq": {
+      "properties": {
+        "video": {
+          "$ref": "#/definitions/smzxVideo"
+        }
+      },
+      "required": ["video"],
+      "type": "object"
+    },
+    "smzxVideoUpdateResp": {
+      "properties": {
+        "code": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "video": {
+          "$ref": "#/definitions/smzxVideo"
+        }
+      },
+      "required": ["msg", "video", "code"],
       "type": "object"
     }
   },
   "info": {
-    "title": "matrix/matrix.proto",
+    "title": "smzx/smzx.proto",
     "version": "version not set"
   },
   "paths": {
-    "/rpc/tsm/MatrixService.AddMatrix": {
+    "/rpc/smzx.service-robotics/AgvDeviceService.Get": {
       "post": {
-        "operationId": "MatrixService_AddMatrix",
+        "operationId": "AgvDeviceService_Get",
         "parameters": [
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/matrixAddMatrixRequest"
+              "$ref": "#/definitions/smzxAgvDeviceGetReq"
             }
           }
         ],
@@ -218,24 +1301,24 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/matrixAddMatrixResponse"
+              "$ref": "#/definitions/smzxAgvDeviceGetResp"
             }
           }
         },
-        "summary": "添加矩阵",
-        "tags": ["MatrixService"]
+        "summary": "AGV设备详细 包括属性列表 pad",
+        "tags": ["AgvDeviceService"]
       }
     },
-    "/rpc/tsm/MatrixService.DelMatrix": {
+    "/rpc/smzx.service-robotics/AgvDeviceService.Import": {
       "post": {
-        "operationId": "MatrixService_DelMatrix",
+        "operationId": "AgvDeviceService_Import",
         "parameters": [
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/matrixDelMatrixRequest"
+              "$ref": "#/definitions/smzxAgvDeviceImportReq"
             }
           }
         ],
@@ -243,24 +1326,24 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/matrixDelMatrixResponse"
+              "$ref": "#/definitions/smzxAgvDeviceImportResp"
             }
           }
         },
-        "summary": "删除矩阵",
-        "tags": ["MatrixService"]
+        "summary": "AGV设备导入",
+        "tags": ["AgvDeviceService"]
       }
     },
-    "/rpc/tsm/MatrixService.GetMatrix": {
+    "/rpc/smzx.service-robotics/AgvDeviceService.Page": {
       "post": {
-        "operationId": "MatrixService_GetMatrix",
+        "operationId": "AgvDeviceService_Page",
         "parameters": [
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/matrixGetMatrixRequest"
+              "$ref": "#/definitions/smzxAgvDevicePageReq"
             }
           }
         ],
@@ -268,24 +1351,24 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/matrixGetMatrixResponse"
+              "$ref": "#/definitions/smzxAgvDevicePageResp"
             }
           }
         },
-        "summary": "获取矩阵",
-        "tags": ["MatrixService"]
+        "summary": "AGV设备分页",
+        "tags": ["AgvDeviceService"]
       }
     },
-    "/rpc/tsm/MatrixService.ListMatrix": {
+    "/rpc/smzx.service-robotics/AgvDeviceService.Update": {
       "post": {
-        "operationId": "MatrixService_ListMatrix",
+        "operationId": "AgvDeviceService_Update",
         "parameters": [
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/matrixListMatrixRequest"
+              "$ref": "#/definitions/smzxAgvDeviceUpdateReq"
             }
           }
         ],
@@ -293,24 +1376,24 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/matrixListMatrixResponse"
+              "$ref": "#/definitions/smzxAgvDeviceUpdateResp"
             }
           }
         },
-        "summary": "矩阵列表",
-        "tags": ["MatrixService"]
+        "summary": "更新AGV设备",
+        "tags": ["AgvDeviceService"]
       }
     },
-    "/rpc/tsm/MatrixService.PushMatrix": {
+    "/rpc/smzx.service-robotics/BroadcastService.Add": {
       "post": {
-        "operationId": "MatrixService_PushMatrix",
+        "operationId": "BroadcastService_Add",
         "parameters": [
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/matrixPushMatrixRequest"
+              "$ref": "#/definitions/smzxBroadcastAddReq"
             }
           }
         ],
@@ -318,24 +1401,24 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/matrixPushMatrixResponse"
+              "$ref": "#/definitions/smzxBroadcastAddResp"
             }
           }
         },
-        "summary": "矩阵推送",
-        "tags": ["MatrixService"]
+        "summary": "添加播报",
+        "tags": ["BroadcastService"]
       }
     },
-    "/rpc/tsm/MatrixService.UpdateMatrix": {
+    "/rpc/smzx.service-robotics/BroadcastService.Del": {
       "post": {
-        "operationId": "MatrixService_UpdateMatrix",
+        "operationId": "BroadcastService_Del",
         "parameters": [
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/matrixUpdateMatrixRequest"
+              "$ref": "#/definitions/smzxBroadcastDelReq"
             }
           }
         ],
@@ -343,12 +1426,662 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/matrixUpdateMatrixResponse"
+              "$ref": "#/definitions/smzxBroadcastDelResp"
             }
           }
         },
-        "summary": "更新矩阵",
-        "tags": ["MatrixService"]
+        "summary": "删除播报",
+        "tags": ["BroadcastService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/BroadcastService.Get": {
+      "post": {
+        "operationId": "BroadcastService_Get",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxBroadcastGetReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxBroadcastGetResp"
+            }
+          }
+        },
+        "summary": "获取播报",
+        "tags": ["BroadcastService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/BroadcastService.Page": {
+      "post": {
+        "operationId": "BroadcastService_Page",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxBroadcastPageReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxBroadcastPageResp"
+            }
+          }
+        },
+        "summary": "播报列表",
+        "tags": ["BroadcastService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/BroadcastService.Update": {
+      "post": {
+        "operationId": "BroadcastService_Update",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxBroadcastUpdateReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxBroadcastUpdateResp"
+            }
+          }
+        },
+        "summary": "更新播报",
+        "tags": ["BroadcastService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/ChargeService.DeviceList": {
+      "post": {
+        "operationId": "ChargeService_DeviceList",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxChargeDeviceListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxChargeDeviceListResp"
+            }
+          }
+        },
+        "tags": ["ChargeService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/ChargeService.GetConfig": {
+      "post": {
+        "operationId": "ChargeService_GetConfig",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxChargeConfigGetReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxChargeConfigGetResp"
+            }
+          }
+        },
+        "tags": ["ChargeService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/ChargeService.UpdateConfig": {
+      "post": {
+        "operationId": "ChargeService_UpdateConfig",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxChargeConfigUpdateReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxChargeConfigUpdateResp"
+            }
+          }
+        },
+        "tags": ["ChargeService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/DevicePropertyService.Refresh": {
+      "post": {
+        "operationId": "DevicePropertyService_Refresh",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxDevicePropertyRefreshReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxDevicePropertyRefreshResp"
+            }
+          }
+        },
+        "summary": "属性刷新",
+        "tags": ["DevicePropertyService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/MeetingService.List": {
+      "post": {
+        "operationId": "MeetingService_List",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxMeetingListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxMeetingListResp"
+            }
+          }
+        },
+        "summary": "会议室列表",
+        "tags": ["MeetingService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/MeetingService.StartTask": {
+      "post": {
+        "operationId": "MeetingService_StartTask",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxMeetingStartTaskReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxMeetingStartTaskResp"
+            }
+          }
+        },
+        "tags": ["MeetingService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/SensorDeviceService.AllProperty": {
+      "post": {
+        "operationId": "SensorDeviceService_AllProperty",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDeviceAllPropertyReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDeviceAllPropertyResp"
+            }
+          }
+        },
+        "summary": "传感器设备所有属性 pad",
+        "tags": ["SensorDeviceService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/SensorDeviceService.Import": {
+      "post": {
+        "operationId": "SensorDeviceService_Import",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDeviceImportReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDeviceImportResp"
+            }
+          }
+        },
+        "summary": "传感器设备导入",
+        "tags": ["SensorDeviceService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/SensorDeviceService.Page": {
+      "post": {
+        "operationId": "SensorDeviceService_Page",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDevicePageReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDevicePageResp"
+            }
+          }
+        },
+        "summary": "传感器设备分页",
+        "tags": ["SensorDeviceService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/SensorDeviceService.Update": {
+      "post": {
+        "operationId": "SensorDeviceService_Update",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDeviceUpdateReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxSensorDeviceUpdateResp"
+            }
+          }
+        },
+        "summary": "更新传感器设备",
+        "tags": ["SensorDeviceService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/StreamService.BigScreen": {
+      "post": {
+        "operationId": "StreamService_BigScreen",
+        "parameters": [
+          {
+            "description": " (streaming inputs)",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxStreamReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "properties": {
+                "error": {
+                  "$ref": "#/definitions/runtimeStreamError"
+                },
+                "result": {
+                  "$ref": "#/definitions/smzxStreamResp"
+                }
+              },
+              "title": "Stream result of smzxStreamResp",
+              "type": "object"
+            }
+          }
+        },
+        "summary": "大屏双向流",
+        "tags": ["StreamService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/StreamService.IceScreen": {
+      "post": {
+        "operationId": "StreamService_IceScreen",
+        "parameters": [
+          {
+            "description": " (streaming inputs)",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxStreamReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "properties": {
+                "error": {
+                  "$ref": "#/definitions/runtimeStreamError"
+                },
+                "result": {
+                  "$ref": "#/definitions/smzxStreamResp"
+                }
+              },
+              "title": "Stream result of smzxStreamResp",
+              "type": "object"
+            }
+          }
+        },
+        "summary": "冰屏双向流",
+        "tags": ["StreamService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/StreamService.Pad": {
+      "post": {
+        "operationId": "StreamService_Pad",
+        "parameters": [
+          {
+            "description": " (streaming inputs)",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxStreamReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "properties": {
+                "error": {
+                  "$ref": "#/definitions/runtimeStreamError"
+                },
+                "result": {
+                  "$ref": "#/definitions/smzxStreamResp"
+                }
+              },
+              "title": "Stream result of smzxStreamResp",
+              "type": "object"
+            }
+          }
+        },
+        "summary": "pad端双向流",
+        "tags": ["StreamService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/TaskRecordService.Page": {
+      "post": {
+        "operationId": "TaskRecordService_Page",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxTaskRecordPageReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxTaskRecordPageResp"
+            }
+          }
+        },
+        "summary": "任务记录分页",
+        "tags": ["TaskRecordService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/VideoService.Add": {
+      "post": {
+        "operationId": "VideoService_Add",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxVideoAddReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxVideoAddResp"
+            }
+          }
+        },
+        "summary": "添加视频",
+        "tags": ["VideoService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/VideoService.DelList": {
+      "post": {
+        "operationId": "VideoService_DelList",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxVideoDelListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxVideoDelListResp"
+            }
+          }
+        },
+        "summary": "删除视频列表",
+        "tags": ["VideoService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/VideoService.DeviceList": {
+      "post": {
+        "operationId": "VideoService_DeviceList",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxVideoDeviceListReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxVideoDeviceListResp"
+            }
+          }
+        },
+        "summary": "获取视频设备列表",
+        "tags": ["VideoService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/VideoService.Get": {
+      "post": {
+        "operationId": "VideoService_Get",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxVideoGetReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxVideoGetResp"
+            }
+          }
+        },
+        "summary": "获取视频",
+        "tags": ["VideoService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/VideoService.Page": {
+      "post": {
+        "operationId": "VideoService_Page",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxVideoPageReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxVideoPageResp"
+            }
+          }
+        },
+        "summary": "视频列表",
+        "tags": ["VideoService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/VideoService.Push": {
+      "post": {
+        "operationId": "VideoService_Push",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxVideoPushReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxVideoPushResp"
+            }
+          }
+        },
+        "summary": "视频推送",
+        "tags": ["VideoService"]
+      }
+    },
+    "/rpc/smzx.service-robotics/VideoService.Update": {
+      "post": {
+        "operationId": "VideoService_Update",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxVideoUpdateReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxVideoUpdateResp"
+            }
+          }
+        },
+        "summary": "更新视频",
+        "tags": ["VideoService"]
+      }
+    },
+    "/rpc/smzx/TaskDispatchService.Common": {
+      "post": {
+        "operationId": "TaskDispatchService_Common",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/smzxCommonReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/smzxCommonResp"
+            }
+          }
+        },
+        "tags": ["TaskDispatchService"]
       }
     }
   },
